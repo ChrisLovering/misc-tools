@@ -14,7 +14,7 @@ projects_we_want = [
     {'account': 'PoE-Overlay-Community', 'project': 'PoE-Overlay-Community-Fork', 'asset_template': Template('poe-overlay-$ver.exe')},
     {'account': 'lemasato', 'project': 'POE-Trades-Companion', 'asset_template': Template('POE-Trades-Companion-AHK-v$ver.zip')},
     {'account': 'Exslims', 'project': 'MercuryTrade', 'asset_template': Template('MercuryTrade.jar')},
-    {'account': 'viktorgullmark', 'project': 'exilence-next', 'asset_template': Template('Exilence-Next-Setup-$ver.exe')},
+    {'account': 'viktorgullmark', 'project': 'exilence-next', 'asset_template': Template('Exilence-Next-Setup-$ver.exe')}
 ]
 
 def get_version_number(project):
