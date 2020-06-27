@@ -6,7 +6,6 @@ import pathlib
 
 github_latest_tag_template = Template('https://github.com/$account/$project/releases/latest')
 github_file_download_template = Template('https://github.com/$account/$project/releases/download/$version/$filename')
-headers = {'Accept': 'application/json'}
 
 projects_we_want = [
     {'account': 'PathOfBuildingCommunity', 'project': 'PathOfBuilding', 'asset_template': Template('PathOfBuildingCommunity-Setup-$ver.exe')},
@@ -20,7 +19,7 @@ def get_version_number(project):
     url = github_latest_tag_template.substitute(
         account=project['account'], project=project['project']
     )
-    r = requests.get(url, headers=headers)
+    r = requests.get(url, headers={'Accept': 'application/json'})
     r.raise_for_status()
     return r.json()['tag_name']
 
