@@ -8,10 +8,12 @@ github_latest_tag_template = Template('https://github.com/$account/$project/rele
 github_file_download_template = Template('https://github.com/$account/$project/releases/download/$version/$filename')
 headers = {'Accept': 'application/json'}
 
+# MercuryTrade is no longer maintained, no need to worry about version controlling it.
 projects_we_want = [
     {'account': 'PathOfBuildingCommunity', 'project': 'PathOfBuilding', 'asset_template': Template('PathOfBuildingCommunity-Setup-$ver.exe')},
     {'account': 'PoE-Overlay-Community', 'project': 'PoE-Overlay-Community-Fork', 'asset_template': Template('poe-overlay-$ver.exe')},
-    {'account': 'lemasato', 'project': 'POE-Trades-Companion', 'asset_template': Template('POE-Trades-Companion-AHK-v$ver.zip')}
+    {'account': 'lemasato', 'project': 'POE-Trades-Companion', 'asset_template': Template('POE-Trades-Companion-AHK-v$ver.zip')},
+    {'account': 'Exslims', 'project': 'MercuryTrade', 'asset_template': Template('MercuryTrade.jar')}
 ]
 
 def get_version_number(project):
