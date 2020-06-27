@@ -24,9 +24,8 @@ def get_version_number(project):
     r.raise_for_status()
     return r.json()['tag_name']
 
-def download_file(url, filename):
-    filepath = Path(dirname, 'downloads', filename)
-    with open(filepath, 'wb') as f:
+def download_file(url, file_save_path):
+    with open(file_save_path, 'wb') as f:
         # Used to calc elapsed time
         start = time.perf_counter()
         
@@ -71,24 +70,27 @@ if __name__ == '__main__':
         # Build asset name based off version number
         asset_name = project['asset_template'].substitute(ver=latest_version_without_v)
 
-        
+        # Build the download url
         asset_url = github_file_download_template.substitute(
             account=project['account'], project=project['project'],
             version=latest_version_tag, filename=asset_name
         )
 
-        # If the asset doesn't include a version in the name, add it here
+        # If the asset doesn't include a version in the name
+        # insert the version at the end of the file name, before the file type
         if project.get('no_version_in_asset_name', False):
             asset_name_list = asset_name.split('.')
             asset_name_list.insert(len(asset_name_list) - 1, latest_version_without_v)
             asset_name = '.'.join(asset_name_list)
 
+        # Check if file already exists before downloading
         if Path(dirname, 'downloads', asset_name).is_file():
             print("Found", asset_name, 'not downloading new.')
         else:
             print('Downloading', asset_name)
-            time_elapsed = download_file(asset_url, asset_name)
-            print('Finished downloading.', 'Time taken:', round(time_elapsed, 2))
+            file_save_path = Path(dirname, 'downloads', asset_name)
+            time_elapsed = download_file(asset_url, file_save_path)
+            print('Finished downloading. Time taken:', round(time_elapsed, 2))
         
         # New line is just for seperation
         print()
