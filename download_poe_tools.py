@@ -84,11 +84,11 @@ if __name__ == '__main__':
             asset_name = '.'.join(asset_name_list)
 
         # Check if file already exists before downloading
-        if Path(dirname, 'downloads', asset_name).is_file():
+        file_save_path = Path(dirname, 'downloads', asset_name)
+        if file_save_path.is_file():
             print("Found", asset_name, 'not downloading new.')
         else:
             print('Downloading', asset_name)
-            file_save_path = Path(dirname, 'downloads', asset_name)
             time_elapsed = download_file(asset_url, file_save_path)
             print('Finished downloading. Time taken:', round(time_elapsed, 2))
         
