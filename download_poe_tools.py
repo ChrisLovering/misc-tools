@@ -25,11 +25,10 @@ def get_version_number(project):
     return r.json()['tag_name']
 
 def download_file(url, file_save_path):
-    with open(file_save_path, 'wb') as f:
+    with open(file_save_path, 'wb') as f, requests.get(url, stream=True) as r:
         # Used to calc elapsed time
         start = time.perf_counter()
         
-        r = requests.get(url, stream=True)
         total_length = int(r.headers.get('content-length'))
 
         num_progress_trackers = 50
