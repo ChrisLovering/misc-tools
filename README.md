@@ -1,5 +1,7 @@
 # Miscellaneous Tools
-This repo contains common scripts & tools that I use across devices.
+This repo contains some misc scripts & tools that I use across devices.
+
+I'm slowly improving & adding them all into this one place for ease of use.
 
 ## [POE tools downloader](download_poe_tools.py)
 This script looks up the latest version of some tools I use while playing [Path of Exile](https://www.pathofexile.com/).
