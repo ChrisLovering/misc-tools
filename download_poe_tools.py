@@ -1,8 +1,9 @@
 from string import Template
+from pathlib import Path
 import requests
 import time
-import os
-import pathlib
+
+dirname = Path(__file__).parent.absolute()
 
 github_latest_tag_template = Template('https://github.com/$account/$project/releases/latest')
 github_file_download_template = Template('https://github.com/$account/$project/releases/download/$version/$filename')
@@ -24,7 +25,7 @@ def get_version_number(project):
     return r.json()['tag_name']
 
 def download_file(url, filename):
-    filepath = os.path.join(dirname, 'downloads', filename)
+    filepath = Path(dirname, 'downloads', filename)
     with open(filepath, 'wb') as f:
         # Used to calc elapsed time
         start = time.perf_counter()
@@ -51,14 +52,9 @@ def download_file(url, filename):
         print()
     return (time.perf_counter() - start)
 
-def check_exists(filename):
-    return pathlib.Path(os.path.join(dirname, 'downloads', filename)).is_file()
-
-
 if __name__ == '__main__':
-    dirname = os.path.dirname(os.path.abspath(__file__))
     # Check if downloads folder exists. If not, make it.
-    pathlib.Path(os.path.join(dirname, 'downloads')).mkdir(parents=True, exist_ok=True)
+    Path(dirname, 'downloads').mkdir(parents=True, exist_ok=True)
 
     for project in projects_we_want:
         print('Getting latest version of', project['project'], '...', end='', flush=True)
@@ -87,7 +83,7 @@ if __name__ == '__main__':
             asset_name_list.insert(len(asset_name_list) - 1, latest_version_without_v)
             asset_name = '.'.join(asset_name_list)
 
-        if check_exists(asset_name):
+        if Path(dirname, 'downloads', asset_name).is_file():
             print("Found", asset_name, 'not downloading new.')
         else:
             print('Downloading', asset_name)
