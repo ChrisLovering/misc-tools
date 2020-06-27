@@ -37,6 +37,7 @@ def download_file(url, filename):
         num_progress_trackers = 50
         download_progress = 0
 
+        # This for loop is downloading a file and printing progress on a single line.
         for chunk in r.iter_content(chunk_size=16*1024):
             download_progress += len(chunk)
             f.write(chunk)
