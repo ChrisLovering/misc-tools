@@ -8,12 +8,11 @@ github_latest_tag_template = Template('https://github.com/$account/$project/rele
 github_file_download_template = Template('https://github.com/$account/$project/releases/download/$version/$filename')
 headers = {'Accept': 'application/json'}
 
-# MercuryTrade is no longer maintained, no need to worry about version controlling it.
 projects_we_want = [
     {'account': 'PathOfBuildingCommunity', 'project': 'PathOfBuilding', 'asset_template': Template('PathOfBuildingCommunity-Setup-$ver.exe')},
     {'account': 'PoE-Overlay-Community', 'project': 'PoE-Overlay-Community-Fork', 'asset_template': Template('poe-overlay-$ver.exe')},
     {'account': 'lemasato', 'project': 'POE-Trades-Companion', 'asset_template': Template('POE-Trades-Companion-AHK-v$ver.zip')},
-    {'account': 'Exslims', 'project': 'MercuryTrade', 'asset_template': Template('MercuryTrade.jar')},
+    {'account': 'Exslims', 'project': 'MercuryTrade', 'asset_template': Template('MercuryTrade.jar'), 'no_version_in_asset_name': True},
     {'account': 'viktorgullmark', 'project': 'exilence-next', 'asset_template': Template('Exilence-Next-Setup-$ver.exe')}
 ]
 
@@ -82,6 +81,13 @@ if __name__ == '__main__':
             account=project['account'], project=project['project'],
             version=latest_version_tag, filename=asset_name
         )
+
+        # If the asset doesn't include a version in the name, add it here
+        if project.get('no_version_in_asset_name', False):
+            asset_name_list = asset_name.split('.')
+            asset_name_list.insert(len(asset_name_list) - 1, latest_version_without_v)
+            asset_name = '.'.join(asset_name_list)
+
         if check_exists(asset_name):
             print("Found", asset_name, 'not downloading new.')
         else:
