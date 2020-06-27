@@ -36,15 +36,16 @@ def download_file(url, file_save_path):
 
         # This for loop is downloading a file and printing progress on a single line.
         for chunk in r.iter_content(chunk_size=16*1024):
-            download_progress += len(chunk)
-            f.write(chunk)
-            percent_done = download_progress / total_length
-            progress_trackers_complete = int(num_progress_trackers * percent_done)
-            print('[{done}{not_done}] {percent_done}%'.format(
-                done='=' * progress_trackers_complete,
-                not_done= ' ' * (num_progress_trackers-progress_trackers_complete),
-                percent_done=round(percent_done*100,2)
-            ),end='\r',flush=True)
+            if chunk:  # filter out keep-alive new chunks
+                download_progress += len(chunk)
+                f.write(chunk)
+                percent_done = download_progress / total_length
+                progress_trackers_complete = int(num_progress_trackers * percent_done)
+                print('[{done}{not_done}] {percent_done}%'.format(
+                    done='=' * progress_trackers_complete,
+                    not_done= ' ' * (num_progress_trackers-progress_trackers_complete),
+                    percent_done=round(percent_done*100,2)
+                ),end='\r',flush=True)
 
         # New line to escape carridge escaped line
         print()
