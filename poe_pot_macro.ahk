@@ -1,6 +1,7 @@
 ﻿#NoEnv
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+Menu, Tray, Icon, shell32.dll, 44 ; Sets the system tray icon to a star, to differentiate from other ahk scripts
 
 #IfWinActive, ahk_class POEWindowClass
 `::
