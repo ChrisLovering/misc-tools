@@ -17,7 +17,7 @@ Running this script will create a `downloads` directory in the repo directory.
 
 When this script is ran, it will check if the most up to date version is already present. If not, the script will download it.
 
-## [GGPK dragger](ggpk_defragment.rb)
+## [GGPK defragger](ggpk_defragment.rb)
 Credit: https://gist.github.com/Zoxc/2393192
 
 Requirements: `gem install bindata`
