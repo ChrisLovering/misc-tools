@@ -17,6 +17,13 @@ Running this script will create a `downloads` directory in the repo directory.
 
 When this script is ran, it will check if the most up to date version is already present. If not, the script will download it.
 
+## [GGPK dragger](ggpk_defragment.rb)
+Credit: https://gist.github.com/Zoxc/2393192
+
+Requirements: `gem install bindata`
+
+Run this to reduce the size of POE's Content.ggpk file, which grows in size with each patch.
+
 ## [Copy start script](CopyStart.ps1)
 This script opens a file selector window. The file selected is the copied to the current user's startup folder.
 
