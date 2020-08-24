@@ -26,11 +26,11 @@ def get_version_number(project):
 
 def download_file(url, file_save_path):
     with open(file_save_path, 'wb') as f, requests.get(url, stream=True) as r:
+        r.raise_for_status()
         # Used to calc elapsed time
         start = time.perf_counter()
-        
         total_length = int(r.headers.get('content-length'))
-
+        #init progress vars
         num_progress_trackers = 50
         download_progress = 0
 
@@ -46,10 +46,9 @@ def download_file(url, file_save_path):
                     not_done= ' ' * (num_progress_trackers-progress_trackers_complete),
                     percent_done=round(percent_done*100,2)
                 ),end='\r',flush=True)
-
         # New line to escape carridge escaped line
         print()
-    return (time.perf_counter() - start)
+    return (time.perf_counter() - start) #time taken to download
 
 if __name__ == '__main__':
     # Check if downloads folder exists. If not, make it.
