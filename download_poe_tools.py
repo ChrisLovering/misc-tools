@@ -81,5 +81,4 @@ if __name__ == '__main__':
             print('Downloading', asset_name)
             time_elapsed = download_file(asset_url, file_save_path)
             print('Finished downloading. Time taken:', round(time_elapsed, 2))
-        
         print() # Seperation
