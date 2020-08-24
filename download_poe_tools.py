@@ -52,12 +52,10 @@ if __name__ == '__main__':
     Path(dirname, 'downloads').mkdir(parents=True, exist_ok=True)
 
     for project in projects_we_want:
-        print('Getting latest version of', project['project'], '...', end='', flush=True)
         latest_version_tag = get_version_number(project)
-        print(' Latest version is', latest_version_tag)
+        print(f'Latest version of {project["project"]} is {latest_version_tag}')
         
-        # Some github latest tags start with a v's.
-        # Need a var without these as they aren't included in the asset name
+        # Remove v's as they aren't included in the asset name
         latest_version_without_v = latest_version_tag[1:] if latest_version_tag[0] =='v' else latest_version_tag
 
         # POE-Trades-Companion uses dashes in the asset name
