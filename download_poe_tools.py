@@ -27,14 +27,12 @@ def get_version_number(project):
 def download_file(url, file_save_path):
     with open(file_save_path, 'wb') as f, requests.get(url, stream=True) as r:
         r.raise_for_status()
-        # Used to calc elapsed time
+
         start = time.perf_counter()
         total_length = int(r.headers.get('content-length'))
-        #init progress vars
         num_progress_trackers = 50
         download_progress = 0
 
-        # This for loop is downloading a file and printing progress on a single line.
         for chunk in r.iter_content(chunk_size=16*1024):
             if chunk:  # filter out keep-alive new chunks
                 download_progress += len(chunk)
@@ -46,8 +44,7 @@ def download_file(url, file_save_path):
                     not_done= ' ' * (num_progress_trackers-progress_trackers_complete),
                     percent_done=round(percent_done*100,2)
                 ),end='\r',flush=True)
-        # New line to escape carridge escaped line
-        print()
+        print() # escape carridge escaped line
     return (time.perf_counter() - start) #time taken to download
 
 if __name__ == '__main__':
@@ -66,10 +63,7 @@ if __name__ == '__main__':
         # POE-Trades-Companion uses dashes in the asset name
         if project['project'] == 'POE-Trades-Companion': latest_version_without_v = latest_version_without_v.replace('.', '-')
 
-        # Build asset name based off version number
         asset_name = project['asset_template'].substitute(ver=latest_version_without_v)
-
-        # Build the download url
         asset_url = github_file_download_template.substitute(
             account=project['account'], project=project['project'],
             version=latest_version_tag, filename=asset_name
@@ -82,7 +76,6 @@ if __name__ == '__main__':
             asset_name_list.insert(len(asset_name_list) - 1, latest_version_without_v)
             asset_name = '.'.join(asset_name_list)
 
-        # Check if file already exists before downloading
         file_save_path = Path(dirname, 'downloads', asset_name)
         if file_save_path.is_file():
             print("Found", asset_name, 'not downloading new.')
@@ -91,5 +84,4 @@ if __name__ == '__main__':
             time_elapsed = download_file(asset_url, file_save_path)
             print('Finished downloading. Time taken:', round(time_elapsed, 2))
         
-        # New line is just for seperation
-        print()
+        print() # Seperation
