@@ -8,7 +8,8 @@ if !InStr(FileExist("downloads"), "D"){
 	ExitApp
 }
 
-if !FileExist("C:\Program Files (x86)\Path of Building\Path of Building.exe"){
+FullFilePath := A_AppData . "\Path of Building Community\Path of Building.exe"
+if !FileExist(FullFilePath){
 	MsgBox, Path of building not found. Run installer in the downloads folder
 	ExitApp
 }
