@@ -8,7 +8,8 @@ if !InStr(FileExist("downloads"), "D"){
 	ExitApp
 }
 
-FullFilePath := A_AppData . "\Path of Building Community\Path of Building.exe"
+PoBWorkingDIR := A_AppData . "\Path of Building Community"
+FullFilePath := PoBWorkingDIR . "\Path of Building.exe"
 if !FileExist(FullFilePath){
 	MsgBox, Path of building not found. Run installer in the downloads folder
 	ExitApp
@@ -23,6 +24,6 @@ if !FileExist("C:\Program Files (x86)\Grinding Gear Games\Path of Exile\PathOfEx
 Loop, Files, downloads\*.* 
 	if A_LoopFileName contains poe-overlay,MercuryTrade
 		Run, %A_LoopFileFullPath%
-Run, C:\Program Files (x86)\Path of Building\Path of Building.exe, C:\Program Files (x86)\Path of Building\
+Run, %FullFilePath%, %PoBWorkingDIR%
 Run, C:\Program Files (x86)\Grinding Gear Games\Path of Exile\PathOfExile_x64.exe, C:\Program Files (x86)\Grinding Gear Games\Path of Exile\
 Run, poe_pot_macro.ahk
