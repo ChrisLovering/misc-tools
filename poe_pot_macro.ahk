@@ -27,3 +27,20 @@ Menu, Tray, Icon, shell32.dll, 44 ; Sets the system tray icon to a star, to diff
 	send, 5 ;simulates the keypress of the 5 button. If you use another button, change it!
 }
 return
+
+#IfWinActive, ahk_class POEWindowClass
+]::
+{
+	random, delay1, 10, 30
+	random, delay2, 10, 30
+	random, delay3, 10, 30
+	send, {shift down}
+	sleep, %delay1%
+	send, {lbutton down}
+	send, {lbutton up}
+	sleep, %delay2%
+	send, {shift up}
+	sleep, %delay3%
+	send, {enter}
+}
+return
