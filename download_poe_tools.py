@@ -14,7 +14,7 @@ github_latest_tag_template = Template('https://github.com/$account/$project/rele
 github_file_download_template = Template('https://github.com/$account/$project/releases/download/$version/$filename')
 
 projects_we_want = [
-    {'account': 'PathOfBuildingCommunity', 'project': 'PathOfBuilding', 'asset_template': Template('PathOfBuildingCommunity-Setup-$ver.exe')},
+    {'account': 'SnosMe', 'project': 'awakened-poe-trade', 'asset_template': Template('Awakened-PoE-Trade-Setup-$ver.exe')},
     {'account': 'PoE-Overlay-Community', 'project': 'PoE-Overlay-Community-Fork', 'asset_template': Template('poe-overlay.$ver.exe')},
     {'account': 'lemasato', 'project': 'POE-Trades-Companion', 'asset_template': Template('POE-Trades-Companion-AHK-v$ver.zip')},
     #{'account': 'Exslims', 'project': 'MercuryTrade', 'asset_template': Template('MercuryTrade.jar'), 'no_version_in_asset_name': True},
