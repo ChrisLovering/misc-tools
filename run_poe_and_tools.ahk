@@ -15,6 +15,15 @@ if !FileExist(FullFilePath){
 	ExitApp
 }
 
+
+EnvGet, LocalFolder, LOCALAPPDATA
+AwakenedTradeDIR := LocalFolder . "\Programs\Awakened PoE Trade"
+FullFilePath := AwakenedTradeDIR . "\Awakened PoE Trade.exe"
+if !FileExist(FullFilePath){
+	MsgBox, Awakened PoE trade not found. Run installer in the downloads folder
+	ExitApp
+}
+
 if !FileExist("C:\Program Files (x86)\Grinding Gear Games\Path of Exile\PathOfExile_x64.exe"){
 	MsgBox, You should install PoE.
 	ExitApp
