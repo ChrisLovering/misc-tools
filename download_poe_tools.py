@@ -1,4 +1,3 @@
-from string import Template
 from pathlib import Path
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
@@ -12,8 +11,6 @@ import json
 script_dirname = Path(__file__).parent.absolute()
 downloads_dir = Path(script_dirname, 'downloads')
 downloaded_files_info = Path(downloads_dir, 'downloaded.json')
-
-github_latest_tag_template = Template('https://api.github.com/repos/$account/$project/releases/latest')
 
 projects_we_want = [
     {'id': 1, 'account': 'SnosMe', 'project': 'awakened-poe-trade'},
@@ -33,9 +30,7 @@ def get_set_event_loop():
         raise e
 
 def fetch_one(session, project, timeout=3, retries=0, retry_limit=3, headers=None):
-    url = github_latest_tag_template.substitute(
-        account=project['account'], project=project['project']
-    )
+    url = f'https://api.github.com/repos/{project["account"]}/{project["project"]}/releases/latest'
     try:
         with session.get(url, timeout=timeout, headers=headers) as response:
             response.raise_for_status()
