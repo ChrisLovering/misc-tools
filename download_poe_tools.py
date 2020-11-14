@@ -6,19 +6,21 @@ import functools
 import requests
 from requests.exceptions import ConnectionError, ReadTimeout
 import time
+import json
 
 
-dirname = Path(__file__).parent.absolute()
+script_dirname = Path(__file__).parent.absolute()
+downloads_dir = Path(script_dirname, 'downloads')
+downloaded_files_info = Path(downloads_dir, 'downloaded.json')
 
-github_latest_tag_template = Template('https://github.com/$account/$project/releases/latest')
-github_file_download_template = Template('https://github.com/$account/$project/releases/download/$version/$filename')
+github_latest_tag_template = Template('https://api.github.com/repos/$account/$project/releases/latest')
 
 projects_we_want = [
-    {'account': 'SnosMe', 'project': 'awakened-poe-trade', 'asset_template': Template('Awakened-PoE-Trade-Setup-$ver.exe')},
-    {'account': 'PoE-Overlay-Community', 'project': 'PoE-Overlay-Community-Fork', 'asset_template': Template('poe-overlay.$ver.exe')},
-    {'account': 'lemasato', 'project': 'POE-Trades-Companion', 'asset_template': Template('POE-Trades-Companion-AHK-v$ver.zip')},
-    {'account': 'Exslims', 'project': 'MercuryTrade', 'asset_template': Template('MercuryTrade.jar'), 'no_version_in_asset_name': True},
-    #{'account': 'viktorgullmark', 'project': 'exilence-next', 'asset_template': Template('Exilence-Next-Setup-$ver.exe')}
+    {'id': 1, 'account': 'SnosMe', 'project': 'awakened-poe-trade'},
+    {'id': 2, 'account': 'PoE-Overlay-Community', 'project': 'PoE-Overlay-Community-Fork'},
+    {'id': 3, 'account': 'lemasato', 'project': 'POE-Trades-Companion'},
+    {'id': 4, 'account': 'Exslims', 'project': 'MercuryTrade'},
+    {'id': 5, 'account': 'viktorgullmark', 'project': 'exilence-next'},
 ]
 
 def get_set_event_loop():
@@ -30,7 +32,6 @@ def get_set_event_loop():
             return asyncio.get_event_loop()
         raise e
 
-# Instance is a tuple of (<sub-domain>, <friendly_name>)
 def fetch_one(session, project, timeout=3, retries=0, retry_limit=3, headers=None):
     url = github_latest_tag_template.substitute(
         account=project['account'], project=project['project']
@@ -40,6 +41,10 @@ def fetch_one(session, project, timeout=3, retries=0, retry_limit=3, headers=Non
             response.raise_for_status()
             data = response.json()
             project['version'] = data['tag_name']
+            # Find the first asset that's either .exe or .jar
+            asset_we_want = next(item for item in data['assets'] if item['name'].endswith(('.exe', '.jar')))
+            project['asset_download'] = asset_we_want['browser_download_url']
+            project['asset_name'] = asset_we_want['name']
             return project
     except (ConnectionError, ReadTimeout) as e:
         if retries < retry_limit:
@@ -75,50 +80,50 @@ def download_file(url, file_save_path):
                 f.write(chunk)
                 percent_done = download_progress / total_length
                 progress_trackers_complete = int(num_progress_trackers * percent_done)
-                print('[{done}{not_done}] {percent_done}%'.format(
-                    done='=' * progress_trackers_complete,
-                    not_done= ' ' * (num_progress_trackers-progress_trackers_complete),
-                    percent_done=round(percent_done*100,2)
-                ),end='\r',flush=True)
+                done = '=' * progress_trackers_complete
+                not_done =  ' ' * (num_progress_trackers-progress_trackers_complete)
+                
+                print(f'[{done}{not_done}] {percent_done:.2%}',end='\r',flush=True)
         print() # escape carridge escaped line
     return (time.perf_counter() - start) #time taken to download
 
+def get_installed_versions():
+    with open(downloaded_files_info) as f:
+        return json.load(f)
+
 if __name__ == '__main__':
     # Check if downloads folder exists. If not, make it.
-    Path(dirname, 'downloads').mkdir(parents=True, exist_ok=True)
+    downloads_dir.mkdir(parents=True, exist_ok=True)
+
+    if downloaded_files_info.exists():
+        installed_projects = get_installed_versions()
+    else:
+        installed_projects = None
 
     # Get current versions asynchronously
     loop = get_set_event_loop()
-    verion_numbers_future = asyncio.ensure_future(get_data_asynchronous(headers={'Accept': 'application/json'}))
+    verion_numbers_future = asyncio.ensure_future(get_data_asynchronous(
+        headers={'Accept': 'application/json'}
+    ))
     projects_we_want = loop.run_until_complete(verion_numbers_future)
 
     for project in projects_we_want:
         print(f'Latest version of {project["project"]} is {project["version"]}')
-        
-        # Remove v's as they aren't included in the asset name
-        latest_version_without_v = project["version"][1:] if project["version"][0] =='v' else project["version"]
 
-        # POE-Trades-Companion uses dashes in the asset name
-        if project['project'] == 'POE-Trades-Companion': latest_version_without_v = latest_version_without_v.replace('.', '-')
+        if installed_projects:
+            installed_ver = next((item for item in installed_projects if item["id"] == project['id']), None)
+            if installed_ver and installed_ver['version'] == project["version"]:
+                print(f'Latest version already installed, skipping...')
+                print() # Seperation
+                continue
+            elif installed_ver:
+                print(f'Found old version ({installed_ver}). ', end='', flush=True)
 
-        asset_name = project['asset_template'].substitute(ver=latest_version_without_v)
-        asset_url = github_file_download_template.substitute(
-            account=project['account'], project=project['project'],
-            version=project["version"], filename=asset_name
-        )
-
-        # If the asset doesn't include a version in the name
-        # insert the version at the end of the file name, before the file type
-        if project.get('no_version_in_asset_name', False):
-            asset_name_list = asset_name.split('.')
-            asset_name_list.insert(len(asset_name_list) - 1, latest_version_without_v)
-            asset_name = '.'.join(asset_name_list)
-
-        file_save_path = Path(dirname, 'downloads', asset_name)
-        if file_save_path.is_file():
-            print(f'Found {asset_name} not downloading new.')
-        else:
-            print(f'Downloading {asset_name}')
-            time_elapsed = download_file(asset_url, file_save_path)
-            print(f'Finished downloading. Time taken: {round(time_elapsed, 2)}')
+        file_save_path = Path(downloads_dir, project['asset_name'])
+        print(f'Downloading {project["asset_name"]}')
+        time_elapsed = download_file(project['asset_download'], file_save_path)
+        print(f'Finished downloading. Time taken: {round(time_elapsed, 2)}')
         print() # Seperation
+    
+    with open(downloaded_files_info, 'w') as f:
+        json.dump(projects_we_want, f, indent=4)
