@@ -113,12 +113,13 @@ if __name__ == '__main__':
 
         if installed_projects:
             installed_ver = next((item for item in installed_projects if item["id"] == project['id']), None)
-            if installed_ver and installed_ver['version'] == project["version"]:
-                print(f'Latest version already installed, skipping...')
-                print() # Seperation
-                continue
-            elif installed_ver:
-                print(f'Found old version ({installed_ver}). ', end='', flush=True)
+            if installed_ver:
+                if installed_ver['version'] == project["version"]:
+                    print(f'Latest version already installed, skipping...')
+                    print() # Seperation
+                    continue
+                else:
+                    print(f'Found old version ({installed_ver}). ', end='', flush=True)
 
         file_save_path = Path(downloads_dir, project['asset_name'])
         print(f'Downloading {project["asset_name"]}')
