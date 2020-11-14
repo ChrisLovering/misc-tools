@@ -89,7 +89,13 @@ def download_file(url, file_save_path):
 
 def get_installed_versions():
     with open(downloaded_files_info) as f:
-        return json.load(f)
+        apparent_downloaded = json.load(f)
+    actual_downloaded = []
+    for project in apparent_downloaded:
+        if Path(downloads_dir, project['asset_name']).exists():
+            actual_downloaded.append(project)
+    return actual_downloaded
+
 
 if __name__ == '__main__':
     # Check if downloads folder exists. If not, make it.
