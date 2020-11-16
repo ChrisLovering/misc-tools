@@ -34,7 +34,11 @@ def fetch_one(session, project, timeout=3, retries=0, retry_limit=3, headers=Non
             return project
     except (ConnectionError, ReadTimeout) as e:
         if retries < retry_limit:
-            return fetch_one(session, url, retries=retries+1)
+            return fetch_one(
+                session, project,
+                timeout=timeout, retries=retries+1,
+                retry_limit=retry_limit, headers=headers
+            )
         else:
             raise e
 
