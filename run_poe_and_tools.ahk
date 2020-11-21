@@ -35,4 +35,3 @@ Loop, Files, downloads\*.*
 		Run, %A_LoopFileFullPath%
 Run, %FullFilePath%, %PoBWorkingDIR%
 Run, C:\Program Files (x86)\Grinding Gear Games\Path of Exile\PathOfExile_x64.exe, C:\Program Files (x86)\Grinding Gear Games\Path of Exile\
-Run, poe_pot_macro.ahk
