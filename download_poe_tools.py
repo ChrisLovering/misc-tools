@@ -3,7 +3,8 @@ import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import functools
 import requests
-from requests.exceptions import ConnectionError, ReadTimeout
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 import time
 import json
 
@@ -20,31 +21,30 @@ projects_we_want = [
     {'id': 5, 'account': 'viktorgullmark', 'project': 'exilence-next'},
 ]
 
-def fetch_one(session, project, timeout=3, retries=0, retry_limit=3, headers=None):
+def fetch_one(session, project, timeout=3, headers=None):
     url = f'https://api.github.com/repos/{project["account"]}/{project["project"]}/releases/latest'
-    try:
-        with session.get(url, timeout=timeout, headers=headers) as response:
-            response.raise_for_status()
-            data = response.json()
-            project['latest_version'] = data['tag_name']
-            # Find the first asset that's either .exe or .jar
-            asset_we_want = next(item for item in data['assets'] if item['name'].endswith(('.exe', '.jar')))
-            project['asset_download'] = asset_we_want['browser_download_url']
-            project['asset_name'] = asset_we_want['name']
-            return project
-    except (ConnectionError, ReadTimeout) as e:
-        if retries < retry_limit:
-            return fetch_one(
-                session, project,
-                timeout=timeout, retries=retries+1,
-                retry_limit=retry_limit, headers=headers
-            )
-        else:
-            raise e
-
+    with session.get(url, timeout=timeout, headers=headers) as response:
+        response.raise_for_status()
+        data = response.json()
+        project['latest_version'] = data['tag_name']
+        # Find the first asset that's either .exe or .jar
+        asset_we_want = next(item for item in data['assets'] if item['name'].endswith(('.exe', '.jar')))
+        project['asset_download'] = asset_we_want['browser_download_url']
+        project['asset_name'] = asset_we_want['name']
+        return project
+        
 async def get_data_asynchronous(headers=None):
     with ThreadPoolExecutor(max_workers=10) as executor:
         with requests.Session() as session:
+            retry_strategy = Retry(
+                total=3,
+                status_forcelist=[429, 500, 502, 503, 504],
+                method_whitelist=["HEAD", "GET", "OPTIONS"]
+            )
+            adapter = HTTPAdapter(max_retries=retry_strategy)
+            session.mount("https://", adapter)
+            session.mount("http://", adapter)
+
             loop = asyncio.get_event_loop()
             tasks = [
                 loop.run_in_executor(
