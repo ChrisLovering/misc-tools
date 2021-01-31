@@ -23,7 +23,7 @@ projects_we_want = [
 
 
 def fetch_one(session, project, timeout=3, headers=None):
-    url = f'https://api.github.com/repos/{project["account"]}/'
+    url = f'https://api.github.com/repos/{project["account"]}/' \
     f'{project["project"]}/releases/latest'
     with session.get(url, timeout=timeout, headers=headers) as response:
         response.raise_for_status()
