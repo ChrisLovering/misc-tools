@@ -24,7 +24,7 @@ if !FileExist(FullFilePath){
 	ExitApp
 }
 
-if !FileExist("C:\Program Files (x86)\Grinding Gear Games\Path of Exile\PathOfExile_x64.exe"){
+if !FileExist("F:\PoE\PathOfExile_x64.exe"){
 	MsgBox, You should install PoE.
 	ExitApp
 }
@@ -34,4 +34,4 @@ Loop, Files, downloads\*.*
 	if A_LoopFileName contains poe-overlay,MercuryTrade
 		Run, %A_LoopFileFullPath%
 Run, %FullFilePath%, %PoBWorkingDIR%
-Run, C:\Program Files (x86)\Grinding Gear Games\Path of Exile\PathOfExile_x64.exe, C:\Program Files (x86)\Grinding Gear Games\Path of Exile\
+Run, F:\PoE\PathOfExile_x64.exe, F:\PoE\
