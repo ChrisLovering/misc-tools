@@ -19,12 +19,16 @@ projects_we_want = [
     {'id': 3, 'account': 'lemasato', 'project': 'POE-Trades-Companion'},
     {'id': 4, 'account': 'Exslims', 'project': 'MercuryTrade'},
     {'id': 5, 'account': 'viktorgullmark', 'project': 'exilence-next'},
+    {'id': 6, 'account': 'esge', 'project': 'PoE-HarvestVendor'},
+    {'id': 7, 'account': 'maxensas', 'project': 'xiletrade'},
 ]
 
 
 def fetch_one(session, project, timeout=3, headers=None):
-    url = f'https://api.github.com/repos/{project["account"]}/' \
-    f'{project["project"]}/releases/latest'
+    url = (
+        f'https://api.github.com/repos/{project["account"]}/'
+        f'{project["project"]}/releases/latest'
+    )
     with session.get(url, timeout=timeout, headers=headers) as response:
         response.raise_for_status()
         data = response.json()
@@ -33,7 +37,7 @@ def fetch_one(session, project, timeout=3, headers=None):
         asset_we_want = next(
             item
             for item in data['assets']
-            if item['name'].endswith(('.exe', '.jar'))
+            if item['name'].endswith(('.exe', '.jar', '.rar'))
         )
         project['asset_download'] = asset_we_want['browser_download_url']
         project['asset_name'] = asset_we_want['name']
@@ -118,6 +122,8 @@ def get_installed_versions():
 if __name__ == '__main__':
     # Check if downloads folder exists. If not, make it.
     downloads_dir.mkdir(parents=True, exist_ok=True)
+
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
     if downloaded_files_info.exists():
         get_installed_versions()
