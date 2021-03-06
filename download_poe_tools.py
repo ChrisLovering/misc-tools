@@ -131,7 +131,7 @@ if __name__ == '__main__':
     # Get current versions asynchronously
     loop = asyncio.get_event_loop()
     projects_we_want = loop.run_until_complete(
-        get_data_asynchronous(headers={'Accept': 'application/json'})
+        get_data_asynchronous(headers={'Accept': 'application/json', 'Authorization': f'token 20c03dfee6fc27134bf258c25e5a9cc2bc0a3313'})
     )
 
     for project in projects_we_want:
@@ -153,6 +153,7 @@ if __name__ == '__main__':
                 'Finished downloading. Time taken: '
                 f'{round(time_elapsed, 2)}'
             )
+            project['installed_ver'] = project["latest_version"]
 
         print()  # Seperation
 
