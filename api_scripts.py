@@ -1,3 +1,4 @@
+import csv
 import json
 import time
 
@@ -61,10 +62,21 @@ def get_fields():
 
 def get_sections():
     response = get_data("/operative_field_sections")
+    with open("output.csv", mode='w', newline='') as f:
+        csv_writer = csv.writer(f, delimiter=',', quotechar='')
+        for section in response:
+            for field in section['fields']:
+                row = [
+                    section['name'],
+                    field['slug'],
+                    field['name'],
+                    field['type']
+                ]
 
-    for section in response:
-        for field in section['fields']:
-            print(f"{section['name']}: {field['slug']} - {field['name']}")
+                for option in field['select_option_details']:
+                    row.append(option['value'])
+
+                csv_writer.writerow(row)
 
 
 get_sections()
