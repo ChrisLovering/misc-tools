@@ -1,0 +1,15 @@
+name: "Pull request needs testing tagger"
+
+on:
+  pull_request_target:
+    # "synchronize" is when a commit is pushed to the PR branch 
+    types: [opened, synchronize, reopened]
+
+jobs:
+  add_tag:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/labeler@v3
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        configuration-path: ".github/workflows/auto_tagger_config.yaml"
